@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_luouelle_2023_web_app_westeu_name": {
+            "value": null
+        },
+        "sites_luouelle_2023_web_app_westus2_name": {
+            "value": null
+        },
+        "storageAccounts_luouellebcdr2023_name": {
+            "value": null
+        },
+        "serverfarms_ASP_luouelle2023bcdrtest_85e2_name": {
+            "value": null
+        },
+        "serverfarms_ASP_luouelle2023bcdrtest_8c22_name": {
+            "value": null
+        },
+        "searchServices_luouelle_2023_bcdr_test_westeu_name": {
+            "value": null
+        },
+        "searchServices_luouelle_2023_bcdr_test_westus2_name": {
+            "value": null
+        },
+        "trafficManagerProfiles_luouelle_2023_bcdr_test_name": {
+            "value": null
+        }
+    }
+}
