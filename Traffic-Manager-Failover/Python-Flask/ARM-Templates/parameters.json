@@ -2,29 +2,29 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_luouelle_2023_web_app_westeu_name": {
-            "value": null
+        "westeu_app_name": {
+            "value": "luouelle-westeu-app"
         },
-        "sites_luouelle_2023_web_app_westus2_name": {
-            "value": null
+        "westus_app_name": {
+            "value": "luouelle-westus-app"
         },
-        "storageAccounts_luouellebcdr2023_name": {
-            "value": null
+        "westeu_app_service_plan_name": {
+            "value": "luouelle-westeu-app-service-plan"
         },
-        "serverfarms_ASP_luouelle2023bcdrtest_85e2_name": {
-            "value": null
+        "westus_app_service_plan_name": {
+            "value": "luouelle-westus-app-service-plan"
         },
-        "serverfarms_ASP_luouelle2023bcdrtest_8c22_name": {
-            "value": null
+        "westeu_search_service_name": {
+            "value": "luouelle-westeu-search-service"
         },
-        "searchServices_luouelle_2023_bcdr_test_westeu_name": {
-            "value": null
+        "westus_search_service_name": {
+            "value": "luouelle-westus-search-service"
         },
-        "searchServices_luouelle_2023_bcdr_test_westus2_name": {
-            "value": null
+        "traffic_manager_name": {
+            "value": "luouelle-traffic-manager"
         },
-        "trafficManagerProfiles_luouelle_2023_bcdr_test_name": {
-            "value": null
+        "traffic_manager_dns_name": {
+            "value": "luouelle-traffic-manager"
         }
     }
 }

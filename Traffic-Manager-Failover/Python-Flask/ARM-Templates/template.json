@@ -2,45 +2,38 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_luouelle_2023_web_app_westeu_name": {
-            "defaultValue": "luouelle-2023-web-app-westeu",
+        "westeu_app_name": {
             "type": "String"
         },
-        "sites_luouelle_2023_web_app_westus2_name": {
-            "defaultValue": "luouelle-2023-web-app-westus2",
+        "westus_app_name": {
             "type": "String"
         },
-        "storageAccounts_luouellebcdr2023_name": {
-            "defaultValue": "luouellebcdr2023",
+        "westeu_app_service_plan_name": {
             "type": "String"
         },
-        "serverfarms_ASP_luouelle2023bcdrtest_85e2_name": {
-            "defaultValue": "ASP-luouelle2023bcdrtest-85e2",
+        "westus_app_service_plan_name": {
             "type": "String"
         },
-        "serverfarms_ASP_luouelle2023bcdrtest_8c22_name": {
-            "defaultValue": "ASP-luouelle2023bcdrtest-8c22",
+        "westeu_search_service_name": {
             "type": "String"
         },
-        "searchServices_luouelle_2023_bcdr_test_westeu_name": {
-            "defaultValue": "luouelle-2023-bcdr-test-westeu",
+        "westus_search_service_name": {
             "type": "String"
         },
-        "searchServices_luouelle_2023_bcdr_test_westus2_name": {
-            "defaultValue": "luouelle-2023-bcdr-test-westus2",
+        "traffic_manager_name": {
             "type": "String"
         },
-        "trafficManagerProfiles_luouelle_2023_bcdr_test_name": {
-            "defaultValue": "luouelle-2023-bcdr-test",
+        "traffic_manager_dns_name": {
             "type": "String"
         }
     },
     "variables": {},
     "resources": [
+        // Azure Cognitive Search Services
         {
             "type": "Microsoft.Search/searchServices",
             "apiVersion": "2021-04-01-preview",
-            "name": "[parameters('searchServices_luouelle_2023_bcdr_test_westeu_name')]",
+            "name": "[parameters('westeu_search_service_name')]",
             "location": "West Europe",
             "sku": {
                 "name": "standard"
@@ -68,8 +61,8 @@
         {
             "type": "Microsoft.Search/searchServices",
             "apiVersion": "2021-04-01-preview",
-            "name": "[parameters('searchServices_luouelle_2023_bcdr_test_westus2_name')]",
-            "location": "West US 2",
+            "name": "[parameters('westus_search_service_name')]",
+            "location": "West US",
             "sku": {
                 "name": "standard"
             },
@@ -93,699 +86,87 @@
                 "semanticSearch": "disabled"
             }
         },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2022-05-01",
-            "name": "[parameters('storageAccounts_luouellebcdr2023_name')]",
-            "location": "westus2",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "StorageV2",
-            "properties": {
-                "dnsEndpointType": "Standard",
-                "defaultToOAuthAuthentication": false,
-                "publicNetworkAccess": "Enabled",
-                "allowCrossTenantReplication": true,
-                "minimumTlsVersion": "TLS1_2",
-                "allowBlobPublicAccess": true,
-                "allowSharedKeyAccess": true,
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "virtualNetworkRules": [],
-                    "ipRules": [],
-                    "defaultAction": "Allow"
-                },
-                "supportsHttpsTrafficOnly": true,
-                "encryption": {
-                    "requireInfrastructureEncryption": false,
-                    "services": {
-                        "file": {
-                            "keyType": "Account",
-                            "enabled": true
-                        },
-                        "blob": {
-                            "keyType": "Account",
-                            "enabled": true
-                        }
-                    },
-                    "keySource": "Microsoft.Storage"
-                },
-                "accessTier": "Cool"
-            }
-        },
+        // App Service Plans (Server Farms)
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2022-03-01",
-            "name": "[parameters('serverfarms_ASP_luouelle2023bcdrtest_85e2_name')]",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('westeu_app_service_plan_name')]",
             "location": "West Europe",
             "sku": {
-                "name": "P1v2",
-                "tier": "PremiumV2",
-                "size": "P1v2",
-                "family": "Pv2",
-                "capacity": 1
+                "name": "P1v2"
             },
             "kind": "linux",
             "properties": {
-                "perSiteScaling": false,
-                "elasticScaleEnabled": false,
-                "maximumElasticWorkerCount": 1,
-                "isSpot": false,
-                "reserved": true,
-                "isXenon": false,
-                "hyperV": false,
-                "targetWorkerCount": 0,
-                "targetWorkerSizeId": 0,
-                "zoneRedundant": false
+                "reserved": true
             }
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2022-03-01",
-            "name": "[parameters('serverfarms_ASP_luouelle2023bcdrtest_8c22_name')]",
-            "location": "West US 3",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('westus_app_service_plan_name')]",
+            "location": "West US",
             "sku": {
-                "name": "P1v2",
-                "tier": "PremiumV2",
-                "size": "P1v2",
-                "family": "Pv2",
-                "capacity": 1
+                "name": "P1v2"
             },
             "kind": "linux",
             "properties": {
-                "perSiteScaling": false,
-                "elasticScaleEnabled": false,
-                "maximumElasticWorkerCount": 1,
-                "isSpot": false,
-                "reserved": true,
-                "isXenon": false,
-                "hyperV": false,
-                "targetWorkerCount": 0,
-                "targetWorkerSizeId": 0,
-                "zoneRedundant": false
+                "reserved": true
             }
         },
+        // App Services (Web Sites)
         {
-            "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('westeu_app_name')]",
+            "location": "West Europe",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
-            ],
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "properties": {
-                "changeFeed": {
-                    "enabled": false
-                },
-                "restorePolicy": {
-                    "enabled": false
-                },
-                "containerDeleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 7
-                },
-                "cors": {
-                    "corsRules": []
-                },
-                "deleteRetentionPolicy": {
-                    "allowPermanentDelete": false,
-                    "enabled": true,
-                    "days": 7
-                },
-                "isVersioningEnabled": false
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/fileServices",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
-            ],
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "properties": {
-                "protocolSettings": {
-                    "smb": {}
-                },
-                "cors": {
-                    "corsRules": []
-                },
-                "shareDeleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 7
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/queueServices",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('westeu_app_service_plan_name'))]"
             ],
             "properties": {
-                "cors": {
-                    "corsRules": []
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/tableServices",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
-            ],
-            "properties": {
-                "cors": {
-                    "corsRules": []
+                "enabled": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('westeu_app_service_plan_name'))]",
+                "siteConfig": {
+                    "linuxFxVersion": "PYTHON|3.11"
                 }
             }
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2022-03-01",
-            "name": "[parameters('sites_luouelle_2023_web_app_westeu_name')]",
-            "location": "West Europe",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('westus_app_name')]",
+            "location": "West US",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_luouelle2023bcdrtest_85e2_name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('westus_app_service_plan_name'))]"
             ],
-            "kind": "app,linux",
             "properties": {
                 "enabled": true,
-                "hostNameSslStates": [
-                    {
-                        "name": "luouelle-2023-bcdr-test.trafficmanager.net",
-                        "sslState": "Disabled",
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '.scm.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Repository"
-                    }
-                ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_luouelle2023bcdrtest_85e2_name'))]",
-                "reserved": true,
-                "isXenon": false,
-                "hyperV": false,
-                "vnetRouteAllEnabled": false,
-                "vnetImagePullEnabled": false,
-                "vnetContentShareEnabled": false,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('westus_app_service_plan_name'))]",
                 "siteConfig": {
-                    "numberOfWorkers": 1,
-                    "linuxFxVersion": "PYTHON|3.11",
-                    "acrUseManagedIdentityCreds": false,
-                    "alwaysOn": true,
-                    "http20Enabled": false,
-                    "functionAppScaleLimit": 0,
-                    "minimumElasticInstanceCount": 0
-                },
-                "scmSiteAlsoStopped": false,
-                "clientAffinityEnabled": false,
-                "clientCertEnabled": false,
-                "clientCertMode": "Required",
-                "hostNamesDisabled": false,
-                "customDomainVerificationId": "98D603524B23207851C9FF64ACE27D81F170BADF6340F1CE0BF9BB29D2D5A945",
-                "containerSize": 0,
-                "dailyMemoryTimeQuota": 0,
-                "httpsOnly": true,
-                "redundancyMode": "None",
-                "storageAccountRequired": false,
-                "keyVaultReferenceIdentity": "SystemAssigned"
+                    "linuxFxVersion": "PYTHON|3.11"
+                }
             }
         },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2022-03-01",
-            "name": "[parameters('sites_luouelle_2023_web_app_westus2_name')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_luouelle2023bcdrtest_8c22_name'))]"
-            ],
-            "kind": "app,linux",
-            "properties": {
-                "enabled": true,
-                "hostNameSslStates": [
-                    {
-                        "name": "luouelle-2023-bcdr-test.trafficmanager.net",
-                        "sslState": "Disabled",
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '.scm.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Repository"
-                    }
-                ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_luouelle2023bcdrtest_8c22_name'))]",
-                "reserved": true,
-                "isXenon": false,
-                "hyperV": false,
-                "vnetRouteAllEnabled": false,
-                "vnetImagePullEnabled": false,
-                "vnetContentShareEnabled": false,
-                "siteConfig": {
-                    "numberOfWorkers": 1,
-                    "linuxFxVersion": "PYTHON|3.11",
-                    "acrUseManagedIdentityCreds": false,
-                    "alwaysOn": true,
-                    "http20Enabled": false,
-                    "functionAppScaleLimit": 0,
-                    "minimumElasticInstanceCount": 0
-                },
-                "scmSiteAlsoStopped": false,
-                "clientAffinityEnabled": false,
-                "clientCertEnabled": false,
-                "clientCertMode": "Required",
-                "hostNamesDisabled": false,
-                "customDomainVerificationId": "98D603524B23207851C9FF64ACE27D81F170BADF6340F1CE0BF9BB29D2D5A945",
-                "containerSize": 0,
-                "dailyMemoryTimeQuota": 0,
-                "httpsOnly": true,
-                "redundancyMode": "None",
-                "publicNetworkAccess": "Enabled",
-                "storageAccountRequired": false,
-                "keyVaultReferenceIdentity": "SystemAssigned"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/ftp')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "allow": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/ftp')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "allow": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/scm')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "allow": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/scm')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "allow": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/web')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "numberOfWorkers": 1,
-                "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
-                    "hostingstart.html"
-                ],
-                "netFrameworkVersion": "v4.0",
-                "linuxFxVersion": "PYTHON|3.11",
-                "requestTracingEnabled": false,
-                "remoteDebuggingEnabled": false,
-                "remoteDebuggingVersion": "VS2019",
-                "httpLoggingEnabled": false,
-                "acrUseManagedIdentityCreds": false,
-                "logsDirectorySizeLimit": 35,
-                "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$luouelle-2023-web-app-westeu",
-                "scmType": "None",
-                "use32BitWorkerProcess": true,
-                "webSocketsEnabled": false,
-                "alwaysOn": true,
-                "managedPipelineMode": "Integrated",
-                "virtualApplications": [
-                    {
-                        "virtualPath": "/",
-                        "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": true
-                    }
-                ],
-                "loadBalancing": "LeastRequests",
-                "experiments": {
-                    "rampUpRules": []
-                },
-                "autoHealEnabled": false,
-                "vnetRouteAllEnabled": false,
-                "vnetPrivatePortsCount": 0,
-                "localMySqlEnabled": false,
-                "ipSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictionsUseMain": false,
-                "http20Enabled": false,
-                "minTlsVersion": "1.2",
-                "scmMinTlsVersion": "1.2",
-                "ftpsState": "FtpsOnly",
-                "preWarmedInstanceCount": 0,
-                "functionsRuntimeScaleMonitoringEnabled": false,
-                "minimumElasticInstanceCount": 0,
-                "azureStorageAccounts": {}
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/web')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "numberOfWorkers": 1,
-                "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
-                    "hostingstart.html"
-                ],
-                "netFrameworkVersion": "v4.0",
-                "linuxFxVersion": "PYTHON|3.11",
-                "requestTracingEnabled": false,
-                "remoteDebuggingEnabled": false,
-                "remoteDebuggingVersion": "VS2019",
-                "httpLoggingEnabled": false,
-                "acrUseManagedIdentityCreds": false,
-                "logsDirectorySizeLimit": 35,
-                "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$luouelle-2023-web-app-westus2",
-                "scmType": "None",
-                "use32BitWorkerProcess": true,
-                "webSocketsEnabled": false,
-                "alwaysOn": true,
-                "managedPipelineMode": "Integrated",
-                "virtualApplications": [
-                    {
-                        "virtualPath": "/",
-                        "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": true
-                    }
-                ],
-                "loadBalancing": "LeastRequests",
-                "experiments": {
-                    "rampUpRules": []
-                },
-                "autoHealEnabled": false,
-                "vnetRouteAllEnabled": false,
-                "vnetPrivatePortsCount": 0,
-                "publicNetworkAccess": "Enabled",
-                "localMySqlEnabled": false,
-                "ipSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictionsUseMain": false,
-                "http20Enabled": false,
-                "minTlsVersion": "1.2",
-                "scmMinTlsVersion": "1.2",
-                "ftpsState": "FtpsOnly",
-                "preWarmedInstanceCount": 0,
-                "functionsRuntimeScaleMonitoringEnabled": false,
-                "minimumElasticInstanceCount": 0,
-                "azureStorageAccounts": {}
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/0c51dc53-a6fe-4837-82fa-2a6077e33e9c')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T22:25:30.8129846Z",
-                "end_time": "2023-01-09T22:25:45.6935532Z",
-                "active": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/4dd74168-25c0-4884-b1df-461e799352da')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T22:21:11.3610638Z",
-                "end_time": "2023-01-09T22:21:27.8462188Z",
-                "active": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/8524da86-7ce1-4f7b-9558-cf3b185f6186')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T19:40:07.2777794Z",
-                "end_time": "2023-01-09T19:40:39.1297786Z",
-                "active": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/8d3c1139-9b85-447e-90e9-36635a549fbb')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T22:25:11.0945017Z",
-                "end_time": "2023-01-09T22:25:27.5728725Z",
-                "active": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/97a27c88-0cf3-4292-9ef0-461de07f1f59')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T19:39:44.2307197Z",
-                "end_time": "2023-01-09T19:40:18.890487Z",
-                "active": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/b543009e-0341-42f5-9c2f-736a6c71ace5')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author_email": "N/A",
-                "author": "VS Code",
-                "deployer": "Push-Deployer",
-                "message": "Created via a push deployment",
-                "start_time": "2023-01-09T22:21:20.1877172Z",
-                "end_time": "2023-01-09T22:21:35.6875972Z",
-                "active": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/luouelle-2023-bcdr-test.trafficmanager.net')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "siteName": "luouelle-2023-web-app-westeu",
-                "hostNameType": "Verified"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/luouelle-2023-bcdr-test.trafficmanager.net')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "siteName": "luouelle-2023-web-app-westus2",
-                "hostNameType": "Verified"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westeu_name'), '/', parameters('sites_luouelle_2023_web_app_westeu_name'), '.azurewebsites.net')]",
-            "location": "West Europe",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]"
-            ],
-            "properties": {
-                "siteName": "luouelle-2023-web-app-westeu",
-                "hostNameType": "Verified"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('sites_luouelle_2023_web_app_westus2_name'), '/', parameters('sites_luouelle_2023_web_app_westus2_name'), '.azurewebsites.net')]",
-            "location": "West US 3",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
-            ],
-            "properties": {
-                "siteName": "luouelle-2023-web-app-westus2",
-                "hostNameType": "Verified"
-            }
-        },       
+        // Traffic Manager Profile
         {
             "type": "Microsoft.Network/trafficManagerProfiles",
             "apiVersion": "2018-04-01",
-            "name": "[parameters('trafficManagerProfiles_luouelle_2023_bcdr_test_name')]",
+            "name": "[parameters('traffic_manager_name')]",
             "location": "global",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]",
-                "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('westeu_app_name'))]",
+                "[resourceId('Microsoft.Web/sites', parameters('westus_app_name'))]"
             ],
             "properties": {
                 "profileStatus": "Enabled",
                 "trafficRoutingMethod": "Priority",
                 "dnsConfig": {
-                    "relativeName": "[parameters('trafficManagerProfiles_luouelle_2023_bcdr_test_name')]",
+                    "relativeName": "[parameters('traffic_manager_dns_name')]",
                     "ttl": 60
                 },
                 "monitorConfig": {
-                    "profileMonitorStatus": "Online",
                     "protocol": "HTTP",
                     "port": 80,
                     "path": "/health",
-                    "intervalInSeconds": 30,
-                    "toleratedNumberOfFailures": 3,
-                    "timeoutInSeconds": 10,
                     "expectedStatusCodeRanges": [
                         {
                             "min": 200,
@@ -799,69 +180,24 @@
                 },
                 "endpoints": [
                     {
-                        "id": "[concat(resourceId('Microsoft.Network/trafficManagerProfiles', parameters('trafficManagerProfiles_luouelle_2023_bcdr_test_name')), '/azureEndpoints/West EU 1154')]",
-                        "name": "West EU 1154",
+                        "name": "West EU Endpoint",
                         "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
                         "properties": {
                             "endpointStatus": "Enabled",
-                            "endpointMonitorStatus": "Online",
-                            "targetResourceId": "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westeu_name'))]",
-                            "target": "luouelle-2023-web-app-westeu.azurewebsites.net",
-                            "weight": 1,
-                            "priority": 1,
-                            "endpointLocation": "West Europe"
+                            "targetResourceId": "[resourceId('Microsoft.Web/sites', parameters('westeu_app_name'))]",
+                            "priority": 1
                         }
                     },
                     {
-                        "id": "[concat(resourceId('Microsoft.Network/trafficManagerProfiles', parameters('trafficManagerProfiles_luouelle_2023_bcdr_test_name')), '/azureEndpoints/West US 1154')]",
-                        "name": "West US 1154",
+                        "name": "West US Endpoint",
                         "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
                         "properties": {
                             "endpointStatus": "Enabled",
-                            "endpointMonitorStatus": "Online",
-                            "targetResourceId": "[resourceId('Microsoft.Web/sites', parameters('sites_luouelle_2023_web_app_westus2_name'))]",
-                            "target": "luouelle-2023-web-app-westus2.azurewebsites.net",
-                            "weight": 1,
-                            "priority": 2,
-                            "endpointLocation": "West US 3"
+                            "targetResourceId": "[resourceId('Microsoft.Web/sites', parameters('westus_app_name'))]",
+                            "priority": 2
                         }
                     }
-                ],
-                "trafficViewEnrollmentStatus": "Disabled"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default/insights-logs-probehealthstatusevents')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_luouellebcdr2023_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
-            ],
-            "properties": {
-                "immutableStorageWithVersioning": {
-                    "enabled": false
-                },
-                "defaultEncryptionScope": "$account-encryption-key",
-                "denyEncryptionScopeOverride": false,
-                "publicAccess": "None"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(parameters('storageAccounts_luouellebcdr2023_name'), '/default/insights-metrics-pt1m')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_luouellebcdr2023_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_luouellebcdr2023_name'))]"
-            ],
-            "properties": {
-                "immutableStorageWithVersioning": {
-                    "enabled": false
-                },
-                "defaultEncryptionScope": "$account-encryption-key",
-                "denyEncryptionScopeOverride": false,
-                "publicAccess": "None"
+                ]
             }
         }
     ]
